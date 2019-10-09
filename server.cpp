@@ -30,8 +30,8 @@ int main(int argc, char* argv[]) {
 
     //socket to recieve client connections
     int recvSocket = socket(AF_INET, SOCK_STREAM, 0);
-    //use this option for testing so we can reuse the same socket
     int optval = true;
+    //use this socket option for testing so we can reuse the same socket
     setsockopt(recvSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval));
 
     //socket setup
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
             //otherwise recieve the client message
             for (int cli : clientSockets) {
                 if (FD_ISSET(cli, &clientSds)) {
-                    
+
                     //clear the buffer
                     memset(&buffer, 0, sizeof(buffer));
 
