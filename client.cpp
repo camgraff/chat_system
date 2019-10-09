@@ -68,6 +68,10 @@ int main(int argc, char* argv[]) {
                     memset(&buffer, 0, sizeof(buffer));
                     recv(serverSocket, &buffer, sizeof(buffer), 0);
                     cout << buffer << endl;
+                } 
+                //if the server sent a termination message, exit
+                else if (strcmp(buffer, "Server terminated by administrator. Exiting...") == 0) {
+                    exit(0);
                 }
             }
         }
@@ -84,6 +88,7 @@ int main(int argc, char* argv[]) {
     }
 
     close(serverSocket);
+    return 0;
 }
 
 string waitForInput() {

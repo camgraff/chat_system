@@ -5,6 +5,7 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
+#include <future>
 #include <set>
 #include <map>
 using namespace std;
@@ -15,13 +16,15 @@ using namespace std;
 //maximum number of clients that can simultaeously connect to the server
 #define MAX_CLIENTS 4
 
+//message buffer
+char buffer[1024] = {0};
+
+//set of client sockets
+set<int> clientSockets;
+
+void waitForTermination();
+
 int main(int argc, char* argv[]) {
-    //message buffer
-    char buffer[1024] = {0};
-
-    //set of client sockets
-    set<int> clientSockets;
-
     //map of client sockets to user IDs
     map<int, string> userIDs;      
 
@@ -48,8 +51,11 @@ int main(int argc, char* argv[]) {
     } 
 
     //start listening
-    cout << "Listening for client connection..." << endl;
+    cout << "Server is online! Use ctrl+d to terminate.\nListening for client connection..." << endl;
     listen(recvSocket, MAX_CLIENTS);
+
+    //asynchronous call for server termination signal
+    future<void> fut = async(waitForTermination);
 
     while (1) {
         //clear the buffer
@@ -137,16 +143,29 @@ int main(int argc, char* argv[]) {
             }
 
             //if only 1 client left in room, tell them to wait
-                        if (clientSockets.size() == 1) {
-                            //clear the buffer
-                            memset(&buffer, 0, sizeof(buffer));
-                            strcpy(buffer, "No other users online. Please wait for another user to join.");
-                            send(*clientSockets.begin(), &buffer, strlen(buffer), 0);
-                        }
+            if (clientSockets.size() == 1) {
+                //clear the buffer
+                memset(&buffer, 0, sizeof(buffer));
+                strcpy(buffer, "No other users online. Please wait for another user to join.");
+                send(*clientSockets.begin(), &buffer, strlen(buffer), 0);
+            }
         }
     }
 
-
     //close socket
     close(recvSocket);
+}
+
+void waitForTermination() {
+    string msg;
+    //loop until ctrl+c or ctrl+d
+    while (getline(cin, msg)) {}
+    memset(&buffer, 0, sizeof(buffer));         //clear the buffer
+    strcpy(buffer, "Server terminated by administrator. Exiting...");
+    //send termination message to clients
+    for (int cli : clientSockets) {
+        send(cli, &buffer, strlen(buffer), 0);
+    }
+    cout << "Server terminating..." << endl;
+    exit(0);
 }
