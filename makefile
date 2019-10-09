@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS= -std=c++17 -Werror
+CFLAGS= -std=c++17 -Werror -pthread
 
 server = server
 client = client
