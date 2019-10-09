@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
         cout << "Failed to connect to server. Exiting..." << endl;
         exit(0);
     } else {
-        cout << "Connected to server!" <<endl;
+        cout << "Connected to server! Use ctrl+d to disconnect." <<endl;
     }
 
     //prompt client for their username
@@ -49,20 +49,26 @@ int main(int argc, char* argv[]) {
     send(serverSocket, &buffer, strlen(buffer), 0);
 
     //set socket to nonblocking mode for asynchronous calls
-    fcntl(serverSocket, F_SETFL, O_NONBLOCK);
+    //fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 
     while(1) {
         //asynchronous call for input message while client waits to receive server messages
         future<string> fut = async(waitForInput);
 
         //keep checking for server messages until client enters a message to send
-        //recv() no longer blocks since we put the socket in nonblock mode
         while (fut.wait_for(chrono::seconds(0)) != future_status::ready) {
             //clear the buffer
             memset(&buffer, 0, sizeof(buffer));
-            //get message from the server
-            if (recv(serverSocket, &buffer, sizeof(buffer), 0) >= 0) {
+            //get message from the server, with nonblocking recv
+            if (recv(serverSocket, &buffer, sizeof(buffer), MSG_DONTWAIT) >= 0) {
                 cout << buffer << endl;
+                //if the server has told the client to wait, initiate a blocking recv()
+                if (strcmp(buffer, "No other users online. Please wait for another user to join.") == 0) {
+                    //clear the buffer
+                    memset(&buffer, 0, sizeof(buffer));
+                    recv(serverSocket, &buffer, sizeof(buffer), 0);
+                    cout << buffer << endl;
+                }
             }
         }
 

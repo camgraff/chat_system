@@ -56,8 +56,10 @@ int main(int argc, char* argv[]) {
         memset(&buffer, 0, sizeof(buffer));
         //clear socket descriptors
         FD_ZERO(&clientSds);
+
         //add sockets to set of socket descriptors
         FD_SET(recvSocket, &clientSds);
+
         int maxSd = recvSocket;      //largest file descriptor
         for (int cli : clientSockets) {
             //add active sockets to the set of socket descriptors
@@ -87,9 +89,18 @@ int main(int argc, char* argv[]) {
                     strcpy(buffer, (userID + " connected.").c_str());
                     cout << buffer << endl; 
 
-                    //send new client info to all other active clients 
-                    for (int cli : clientSockets) {
-                        send(cli, &buffer, strlen(buffer), 0);
+                    //if this is the 1st client, tell them to wait until another client joins
+                    if (clientSockets.empty()) {
+                        //clear the buffer
+                        memset(&buffer, 0, sizeof(buffer));
+                        strcpy(buffer, "No other users online. Please wait for another user to join.");
+                        send(newSocket, &buffer, strlen(buffer), 0);
+                    }
+                    //else send new client info to all other active clients 
+                     else {
+                         for (int cli : clientSockets) {
+                            send(cli, &buffer, strlen(buffer), 0);
+                        }
                     }
 
                     //push new client socket to set of sockets
@@ -99,8 +110,9 @@ int main(int argc, char* argv[]) {
                     userIDs.emplace(newSocket, userID);
                 }
             }
-        } else {
-            //otherwise recieve the client message
+        }  
+        //otherwise recieve the client message
+        else {
             for (int cli : clientSockets) {
                 if (FD_ISSET(cli, &clientSds)) {
 
@@ -123,6 +135,14 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
+
+            //if only 1 client left in room, tell them to wait
+                        if (clientSockets.size() == 1) {
+                            //clear the buffer
+                            memset(&buffer, 0, sizeof(buffer));
+                            strcpy(buffer, "No other users online. Please wait for another user to join.");
+                            send(*clientSockets.begin(), &buffer, strlen(buffer), 0);
+                        }
         }
     }
 
