@@ -14,7 +14,7 @@ using namespace std;
 #define PORT 8888
 
 //maximum number of clients that can simultaeously connect to the server
-#define MAX_CLIENTS 4
+#define MAX_CLIENTS 2
 
 //message buffer
 char buffer[1024] = {0};
@@ -78,11 +78,15 @@ int main(int argc, char* argv[]) {
 
         //if activity occurred on recvSocket, then accept the connection
         if (FD_ISSET(recvSocket, &clientSds)) {
+            int addressLen = sizeof(serverAddr);
+            int newSocket = accept(recvSocket, (struct sockaddr*)&serverAddr, (socklen_t*)&addressLen);
+            //if already have max number of clients, tell the connecting client, then close the connection
             if (clientSockets.size() == MAX_CLIENTS) {
-                cout << "Maximum number of clients has been reached." << endl;
+                strcpy(buffer, "Cannot connect another client. Maximum number of connections has been reached.");
+                send(newSocket, &buffer, strlen(buffer), 0);
+                close(newSocket);
+                cout << buffer << endl;
             } else {
-                int addressLen = sizeof(serverAddr);
-                int newSocket = accept(recvSocket, (struct sockaddr*)&serverAddr, (socklen_t*)&addressLen);
                 if (newSocket < 0) {
                     cout << newSocket <<endl;
                     cout << "Error accepting client request [" << strerror(errno) << "]. Exiting..." << endl;
@@ -130,6 +134,7 @@ int main(int argc, char* argv[]) {
                         strcpy(buffer, (userIDs[cli] + " disconnected.").c_str());
                         close(cli);
                         clientSockets.erase(cli);
+                        userIDs.erase(cli);
                     }
                     
                     cout << buffer << endl;

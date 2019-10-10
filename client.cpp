@@ -36,7 +36,14 @@ int main(int argc, char* argv[]) {
         cout << "Failed to connect to server. Exiting..." << endl;
         exit(0);
     } else {
-        cout << "Connected to server! Use ctrl+d to disconnect." <<endl;
+        sleep(0.3);     //pause execution to give the server a chance to send a message if it is full
+        //check for a server message. If there is one, then server is full, so exit.
+        recv(serverSocket, &buffer, sizeof(buffer), MSG_DONTWAIT);
+        if (strcmp(buffer, "Cannot connect another client. Maximum number of connections has been reached.") == 0) {
+            cout << buffer << endl;
+            exit(0);
+        }
+        else cout << "Connected to server! Use ctrl+d to disconnect." <<endl;
     }
 
     //prompt client for their username
