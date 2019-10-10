@@ -11,7 +11,7 @@
 using namespace std;
 
 //port number
-#define PORT 8888
+//#define PORT 8000
 
 //maximum number of clients that can simultaeously connect to the server
 #define MAX_CLIENTS 2
@@ -22,9 +22,19 @@ char buffer[1024] = {0};
 //set of client sockets
 set<int> clientSockets;
 
+//port number
+int PORT = 8888;
+
 void waitForTermination();
 
 int main(int argc, char* argv[]) {
+    if (argc == 2) PORT = atoi(argv[1]);
+    else if (argc == 1) PORT = 8000;
+    else {
+        cout << "To start the server: ./server [PORT]\nPORT is the port number that the server will run on.\nWhen not specified PORT defaults to 8000." << endl;
+        exit(0);
+    }
+
     //map of client sockets to user IDs
     map<int, string> userIDs;      
 

@@ -11,11 +11,23 @@
 using namespace std;
 
 //port number
-#define PORT 8888
+//#define PORT 8000
 
 string waitForInput();
 
 int main(int argc, char* argv[]) {
+    int PORT;
+    string serverIP;
+    if (argc == 1) {
+        serverIP = "127.0.0.1";
+        PORT = 8000;
+    }
+    else if (argc == 3) {
+        serverIP = argv[1];
+        PORT = atoi(argv[2]);
+    } else {
+        cout << "To start the client: ./client [SERVER_IP] [PORT].\nYou must use both arguments or neither. You cannot only specify one argument.\nERVER_IP is the IP address of the server to connect to. When not specificed, defaults to localhost.\nPORT is the port number to connect to. When not specified, defaults to 8000." << endl;
+    }
     //message buffer
     char buffer[1024];
     //socket setup
@@ -29,7 +41,7 @@ int main(int argc, char* argv[]) {
     bzero(&serverAddr, sizeof(serverAddr));      //need to reset serverAddr on consecutive runs
     serverAddr.sin_family = AF_INET; 
     serverAddr.sin_port = htons(PORT); 
-    inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);
+    inet_pton(AF_INET, serverIP.c_str(), &serverAddr.sin_addr);
 
     //connect to the server
     if (connect(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
