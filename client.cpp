@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
         serverIP = argv[1];
         PORT = atoi(argv[2]);
     } else {
-        cout << "To start the client: ./client [SERVER_IP] [PORT].\nYou must use both arguments or neither. You cannot only specify one argument.\nERVER_IP is the IP address of the server to connect to. When not specificed, defaults to localhost.\nPORT is the port number to connect to. When not specified, defaults to 8000." << endl;
+        cout << "To start the client: ./client [SERVER_IP] [PORT].\nYou must use both arguments or neither. You cannot only specify one argument.\nSERVER_IP is the IP address of the server to connect to. When not specificed, defaults to localhost.\nPORT is the port number to connect to. When not specified, defaults to 8000." << endl;
     }
     //message buffer
     char buffer[1024];

@@ -14,7 +14,7 @@ using namespace std;
 //#define PORT 8000
 
 //maximum number of clients that can simultaeously connect to the server
-#define MAX_CLIENTS 2
+#define MAX_CLIENTS 4
 
 //message buffer
 char buffer[1024] = {0};
