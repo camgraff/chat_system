@@ -4,7 +4,7 @@
 
 2. Use './server' to start the server. You can also specify a port number using './server [PORT]'. If not specified, PORT defaults to 8000. 
 
-3. Open a new terminal window and cd into project directory.
+3. Open a new terminal window for each client and cd into project directory.
 
 4. Use './client' to start the client. You can specify a server IP and port number using './client [SERVER_IP] [PORT]'. You cannot only specify one argument. You must specify SERVER_IP and PORT or omit both arguments. SERVER_IP defaults to localhost and PORT default to 8000.
 
