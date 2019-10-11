@@ -1,4 +1,4 @@
-To start the chat system:
+>>To start the chat system:
 
 1. cd into the project directory and type 'make' to compile the server and client.
 
@@ -6,7 +6,7 @@ To start the chat system:
 
 3. Open a new terminal window and cd to project directory.
 
-4. Use './client' to start the client. You can specify a server IP and port number using './client [SERVER_IP] [PORT]'. You can not only specify when argument. You must specify SERVER_IP and PORT or omit both arguments. SERVER_IP defaults to localhost and PORT default to 8000.
+4. Use './client' to start the client. You can specify a server IP and port number using './client [SERVER_IP] [PORT]'. You cannot only specify one argument. You must specify SERVER_IP and PORT or omit both arguments. SERVER_IP defaults to localhost and PORT default to 8000.
 
 NOTE: The easiest way to start the chat system is by omitting all arguments. (i.e. just use ./server to start the server and ./client to connect the client to server.)
 
