@@ -2,7 +2,7 @@
 
 This program is a web-based online chat system that allows multiple users to communicate with each other through a common server. For instructions on how to start the chat system, look at README.md. The system is most easily used by opening several terminal windows on one device. But, it can also be used across multiple devices by using the arguments decribed in README.md. Users can specify an ID that other users will identify them by. When a user sends a message from their client window, it will be shown to all other users that are currently connected to the chat server.
 
-# Technical Detals:
+# Technical Details:
 
 The chat system works by first creating a server on a specified port number (default is 8000). Clients then connect to the server by specifying an IP address and port number (defaults are localhost and 8000). When a client types a message and presses 'enter', the message is sent to the server through a buffer. The server will then forward that message to all other clients that are connected to the server. The same thing happens when a client disconnects from the server; a message is sent to all other clients indicating that a user has disconnected. The server can also be terminated by the system administrator. In this case, a message will be sent to all active clients indicating that the server is shutting down, and all open connections will be closeed.
 
